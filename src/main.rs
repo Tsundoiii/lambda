@@ -1,21 +1,37 @@
-use crate::{
-    program::{Binary, Instruction, Program},
-    vm::VirtualMachine,
+use std::{
+    env, fs,
+    io::{self},
 };
 
-mod program;
-mod types;
+use crate::compiler::compiler::compile;
+
+mod compiler;
 mod vm;
 
 fn main() {
-    let mut p = Program::new();
-    p.add(Instruction::Load(0));
-    p.add(Instruction::Load(1));
-    p.add(Instruction::Negate);
-    p.add(Instruction::Binary(Binary::Multiply));
-    p.add(Instruction::Return);
-    let mut vm = VirtualMachine::from_program(p);
-    while let Ok(()) = vm.execute_instruction() {
-        vm.pointer += 1;
+    let args: Vec<String> = env::args().collect();
+
+    match args.len() {
+        1 => repl(),
+        2 => run_file(args.get(1).expect("No argument provided")),
+        _ => panic!("Too many args"),
+    }
+}
+
+fn repl() {
+    loop {
+        print!("$> ");
+        let mut input: String = String::new();
+        let _ = io::stdin().read_line(&mut input);
+        compile(input);
+    }
+}
+
+fn run_file(path: &str) {
+    match fs::read_to_string(path) {
+        Ok(input) => {
+            compile(input);
+        }
+        Err(_) => panic!("File error"),
     }
 }

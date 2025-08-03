@@ -1,26 +1,6 @@
-use std::fmt::{Debug, Display};
+use std::fmt::Debug;
 
-use crate::types::Constant;
-
-#[derive(Copy, Clone, Debug)]
-pub enum Instruction {
-    Load(usize),
-    Return,
-    Negate,
-    Binary(Binary),
-}
-
-impl Display for Instruction {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
-    }
-}
-
-#[derive(Copy, Clone, Debug)]
-pub enum Binary {
-    Add,
-    Multiply,
-}
+use crate::vm::{constant::Constant, instruction::Instruction};
 
 pub struct Program {
     instructions: Vec<Instruction>,
