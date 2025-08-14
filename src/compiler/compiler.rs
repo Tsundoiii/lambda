@@ -2,7 +2,7 @@ use crate::{
     compiler::{scanner::Scanner, token::TokenType},
     vm::{
         constant::Constant,
-        instruction::{Binary, Instruction},
+        instruction::{Binary, Comparison, Instruction},
         program::Program,
     },
 };
@@ -12,7 +12,6 @@ pub fn compile(input: String) -> Option<Program> {
     let mut program: Program = Program::new();
 
     while let Ok(token) = scanner.scan_token() {
-        dbg!(token);
         match token.token_type {
             TokenType::Integer(integer) => {
                 let i = program.add_constant(Constant::Integer(integer));
@@ -40,6 +39,26 @@ pub fn compile(input: String) -> Option<Program> {
             TokenType::Divide => {
                 program.add_instruction(Instruction::Reciprocate);
                 program.add_instruction(Instruction::Binary(Binary::Multiply));
+            }
+
+            TokenType::Equal => {
+                program.add_instruction(Instruction::Comparison(Comparison::Equal));
+            }
+
+            TokenType::GreaterThan => {
+                program.add_instruction(Instruction::Comparison(Comparison::GreaterThan));
+            }
+
+            TokenType::GreaterThanEqual => {
+                program.add_instruction(Instruction::Comparison(Comparison::GreaterThanEqual));
+            }
+
+            TokenType::LessThan => {
+                program.add_instruction(Instruction::Comparison(Comparison::LessThan));
+            }
+
+            TokenType::LessThanEqual => {
+                program.add_instruction(Instruction::Comparison(Comparison::LessThanEqual));
             }
 
             _ => todo!(),

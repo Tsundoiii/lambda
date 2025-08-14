@@ -4,9 +4,11 @@ use std::fmt::Display;
 pub enum Instruction {
     Load(usize),
     Return,
+    Not,
     Negate,
     Reciprocate,
     Binary(Binary),
+    Comparison(Comparison),
 }
 
 impl Display for Instruction {
@@ -19,4 +21,13 @@ impl Display for Instruction {
 pub enum Binary {
     Add,
     Multiply,
+}
+
+#[derive(Copy, Clone, Debug)]
+pub enum Comparison {
+    Equal,
+    GreaterThan,
+    GreaterThanEqual,
+    LessThan,
+    LessThanEqual,
 }

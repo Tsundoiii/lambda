@@ -1,6 +1,8 @@
+use std::result;
+
 use crate::vm::{
     constant::Constant,
-    instruction::{Binary, Instruction},
+    instruction::{Binary, Comparison, Instruction},
     program::Program,
 };
 
@@ -46,6 +48,15 @@ impl VirtualMachine {
 
                     None => Err(VirtualMachineError::ExecutionError),
                 },
+
+                Instruction::Not => {
+                    if let Some(Constant::Boolean(boolean)) = self.stack.pop() {
+                        self.stack.push(Constant::Boolean(!boolean));
+                        Ok(())
+                    } else {
+                        panic!("ERROR: Invalid operand")
+                    }
+                }
 
                 Instruction::Negate => match self.stack.pop() {
                     Some(value) => match value {
@@ -109,6 +120,51 @@ impl VirtualMachine {
                     },
 
                     None => Err(VirtualMachineError::ExecutionError),
+                },
+
+                Instruction::Comparison(operation) => match self.stack.pop() {
+                    Some(b) => match self.stack.pop() {
+                        Some(a) => match operation {
+                            Comparison::Equal => {
+                                self.stack.push(a.equal(b));
+                                Ok(())
+                            }
+
+                            Comparison::GreaterThan => match a.greater_than(b) {
+                                Some(result) => {
+                                    self.stack.push(result);
+                                    Ok(())
+                                }
+                                None => panic!("ERROR"),
+                            },
+
+                            Comparison::GreaterThanEqual => match a.greater_than_equal(b) {
+                                Some(result) => {
+                                    self.stack.push(result);
+                                    Ok(())
+                                }
+                                None => panic!("ERROR"),
+                            },
+
+                            Comparison::LessThan => match a.less_than(b) {
+                                Some(result) => {
+                                    self.stack.push(result);
+                                    Ok(())
+                                }
+                                None => panic!("ERROR"),
+                            },
+
+                            Comparison::LessThanEqual => match a.less_than_equal(b) {
+                                Some(result) => {
+                                    self.stack.push(result);
+                                    Ok(())
+                                }
+                                None => panic!("ERROR"),
+                            },
+                        },
+                        None => panic!("compare fail"),
+                    },
+                    None => panic!("compare fail"),
                 },
             },
 
