@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct Token {
     pub token_type: TokenType,
     pub start: usize,
@@ -29,10 +29,11 @@ impl Token {
     }
 }
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum TokenType {
     String,
-    Integer,
+    Integer(i32),
+    Float(f32),
     Identifier,
 
     Dot,
@@ -50,7 +51,7 @@ pub enum TokenType {
 
     Hash,
 
-    Error(&'static str),
+    Error,
     End,
 }
 

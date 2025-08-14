@@ -1,9 +1,9 @@
 use std::{
     env, fs,
-    io::{self},
+    io::{self, Write},
 };
 
-use crate::compiler::compiler::compile;
+use crate::{compiler::compiler::compile, vm::vm::VirtualMachine};
 
 mod compiler;
 mod vm;
@@ -22,16 +22,22 @@ fn repl() {
     loop {
         print!("$> ");
         let mut input: String = String::new();
+        let _ = io::stdout().flush();
         let _ = io::stdin().read_line(&mut input);
-        compile(input);
+        execute(input);
     }
 }
 
 fn run_file(path: &str) {
     match fs::read_to_string(path) {
-        Ok(input) => {
-            compile(input);
-        }
+        Ok(input) => execute(input),
+
         Err(_) => panic!("File error"),
+    }
+}
+
+fn execute(input: String) {
+    if let Some(program) = compile(input) {
+        VirtualMachine::new(program).execute();
     }
 }

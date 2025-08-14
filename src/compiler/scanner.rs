@@ -45,7 +45,6 @@ impl Scanner {
                         match Token::from_lexeme(self.current(), self.start, self.line) {
                             Some(token) => Ok(token),
                             None => {
-                                //dbg!(self.current());
                                 todo!();
                             }
                         }
@@ -76,12 +75,35 @@ impl Scanner {
                             self.current += 1;
                         }
 
-                        Ok(Token::from_type(
-                            TokenType::Integer,
-                            self.current(),
-                            self.start,
-                            self.line,
-                        ))
+                        if self.peek() == '.' && self.peek_next().is_digit(10) {
+                            self.current += 1;
+
+                            while self.peek().is_digit(10) {
+                                self.current += 1;
+                            }
+                        }
+
+                        if self.current().contains(".") {
+                            Ok(Token::from_type(
+                                TokenType::Float(
+                                    self.current()
+                                        .parse::<f32>()
+                                        .expect("could not parse float"),
+                                ),
+                                self.current(),
+                                self.start,
+                                self.line,
+                            ))
+                        } else {
+                            Ok(Token::from_type(
+                                TokenType::Integer(
+                                    self.current().parse::<i32>().expect("could not parse int"),
+                                ),
+                                self.current(),
+                                self.start,
+                                self.line,
+                            ))
+                        }
                     }
 
                     _ => {
@@ -107,6 +129,14 @@ impl Scanner {
 
     fn peek(&self) -> char {
         *self.input[self.current..self.current + 1]
+            .chars()
+            .collect::<Vec<char>>()
+            .get(0)
+            .expect("Char not present")
+    }
+
+    fn peek_next(&self) -> char {
+        *self.input[self.current + 1..self.current + 2]
             .chars()
             .collect::<Vec<char>>()
             .get(0)

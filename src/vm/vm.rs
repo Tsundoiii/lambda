@@ -20,6 +20,7 @@ impl VirtualMachine {
     }
 
     pub fn execute(&mut self) {
+        self.program.add_instruction(Instruction::Return);
         while let Ok(()) = self.execute_instruction() {
             self.pointer += 1;
         }
@@ -36,6 +37,7 @@ impl VirtualMachine {
 
                     None => Err(VirtualMachineError::ExecutionError),
                 },
+
                 Instruction::Return => match self.stack.pop() {
                     Some(value) => {
                         println!("{}", value);
@@ -44,12 +46,38 @@ impl VirtualMachine {
 
                     None => Err(VirtualMachineError::ExecutionError),
                 },
+
                 Instruction::Negate => match self.stack.pop() {
                     Some(value) => match value {
                         Constant::Integer(integer) => {
                             self.stack.push(Constant::Integer(-integer));
                             Ok(())
                         }
+
+                        Constant::Float(float) => {
+                            self.stack.push(Constant::Float(-float));
+                            Ok(())
+                        }
+
+                        _ => panic!("ERROR: Invalid operand"),
+                    },
+
+                    None => Err(VirtualMachineError::ExecutionError),
+                },
+
+                Instruction::Reciprocate => match self.stack.pop() {
+                    Some(value) => match value {
+                        Constant::Integer(integer) => {
+                            self.stack.push(Constant::Float(1 as f32 / integer as f32));
+                            Ok(())
+                        }
+
+                        Constant::Float(float) => {
+                            self.stack.push(Constant::Float(1 as f32 / float));
+                            Ok(())
+                        }
+
+                        _ => panic!("ERROR: Invalid operand"),
                     },
 
                     None => Err(VirtualMachineError::ExecutionError),

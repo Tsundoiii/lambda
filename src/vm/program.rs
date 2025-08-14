@@ -11,16 +11,21 @@ impl Program {
     pub fn new() -> Program {
         Program {
             instructions: Vec::new(),
-            constants: vec![Constant::Integer(34), Constant::Integer(2)],
+            constants: Vec::new(),
         }
     }
 
-    pub fn add(&mut self, instruction: Instruction) {
+    pub fn add_instruction(&mut self, instruction: Instruction) {
         self.instructions.push(instruction);
     }
 
     pub fn get_instruction(&self, pointer: usize) -> Option<&Instruction> {
         self.instructions.get(pointer)
+    }
+
+    pub fn add_constant(&mut self, constant: Constant) -> usize {
+        self.constants.push(constant);
+        self.constants.len() - 1
     }
 
     pub fn get_constant(&self, index: usize) -> Option<&Constant> {

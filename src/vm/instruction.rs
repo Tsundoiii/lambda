@@ -5,6 +5,7 @@ pub enum Instruction {
     Load(usize),
     Return,
     Negate,
+    Reciprocate,
     Binary(Binary),
 }
 
