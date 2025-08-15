@@ -1,5 +1,3 @@
-use std::result;
-
 use crate::vm::{
     constant::Constant,
     instruction::{Binary, Comparison, Instruction},
@@ -28,19 +26,33 @@ impl VirtualMachine {
         }
     }
 
+    fn pop_value(&mut self) -> Option<Constant> {
+        let top = self.stack.pop();
+
+        if let Some(Constant::Variable(identifer)) = top {
+            self.program.get_variable(identifer)
+        } else {
+            top
+        }
+    }
+
     fn execute_instruction(&mut self) -> Result<(), VirtualMachineError> {
-        match self.program.get_instruction(self.pointer) {
+        match self.program.get_instruction(self.pointer).cloned() {
             Some(instruction) => match instruction {
-                Instruction::Load(index) => match self.program.get_constant(*index) {
+                Instruction::Clear => {
+                    self.stack.clear();
+                    Ok(())
+                }
+                Instruction::Load(index) => match self.program.get_constant(index) {
                     Some(constant) => {
-                        self.stack.push(*constant);
+                        self.stack.push(constant.clone());
                         Ok(())
                     }
 
                     None => Err(VirtualMachineError::ExecutionError),
                 },
 
-                Instruction::Return => match self.stack.pop() {
+                Instruction::Return => match self.pop_value() {
                     Some(value) => {
                         println!("{}", value);
                         Ok(())
@@ -50,7 +62,7 @@ impl VirtualMachine {
                 },
 
                 Instruction::Not => {
-                    if let Some(Constant::Boolean(boolean)) = self.stack.pop() {
+                    if let Some(Constant::Boolean(boolean)) = self.pop_value() {
                         self.stack.push(Constant::Boolean(!boolean));
                         Ok(())
                     } else {
@@ -58,7 +70,7 @@ impl VirtualMachine {
                     }
                 }
 
-                Instruction::Negate => match self.stack.pop() {
+                Instruction::Negate => match self.pop_value() {
                     Some(value) => match value {
                         Constant::Integer(integer) => {
                             self.stack.push(Constant::Integer(-integer));
@@ -76,7 +88,7 @@ impl VirtualMachine {
                     None => Err(VirtualMachineError::ExecutionError),
                 },
 
-                Instruction::Reciprocate => match self.stack.pop() {
+                Instruction::Reciprocate => match self.pop_value() {
                     Some(value) => match value {
                         Constant::Integer(integer) => {
                             self.stack.push(Constant::Float(1 as f32 / integer as f32));
@@ -94,8 +106,8 @@ impl VirtualMachine {
                     None => Err(VirtualMachineError::ExecutionError),
                 },
 
-                Instruction::Binary(operation) => match self.stack.pop() {
-                    Some(b) => match self.stack.pop() {
+                Instruction::Binary(operation) => match self.pop_value() {
+                    Some(b) => match self.pop_value() {
                         Some(a) => match operation {
                             Binary::Add => match a.add(b) {
                                 Some(result) => {
@@ -122,8 +134,8 @@ impl VirtualMachine {
                     None => Err(VirtualMachineError::ExecutionError),
                 },
 
-                Instruction::Comparison(operation) => match self.stack.pop() {
-                    Some(b) => match self.stack.pop() {
+                Instruction::Comparison(operation) => match self.pop_value() {
+                    Some(b) => match self.pop_value() {
                         Some(a) => match operation {
                             Comparison::Equal => {
                                 self.stack.push(a.equal(b));
@@ -168,7 +180,7 @@ impl VirtualMachine {
                 },
             },
 
-            None => Ok(()),
+            None => Err(VirtualMachineError::ExecutionError),
         }
     }
 }

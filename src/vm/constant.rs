@@ -1,10 +1,11 @@
 use std::fmt::Display;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Debug)]
 pub enum Constant {
     Boolean(bool),
     Integer(i32),
     Float(f32),
+    Variable(String),
 }
 
 impl Constant {
@@ -60,6 +61,8 @@ impl Constant {
                 Self::Float(b) => Self::Boolean(*a == b),
                 _ => Self::Boolean(false),
             },
+
+            _ => Self::Boolean(false),
         }
     }
 
@@ -138,6 +141,9 @@ impl Display for Constant {
             Self::Boolean(boolean) => write!(f, "{}", boolean),
             Self::Integer(integer) => write!(f, "{}", integer),
             Self::Float(float) => write!(f, "{}", float),
+            Self::Variable(identifier) => write!(f, "{}", identifier),
         }
     }
 }
+
+struct Object;

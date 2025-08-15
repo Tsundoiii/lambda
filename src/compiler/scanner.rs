@@ -112,7 +112,7 @@ impl Scanner {
                         }
 
                         Ok(Token::from_type(
-                            TokenType::Identifier,
+                            TokenType::Identifier(self.current().to_string()),
                             self.current(),
                             self.start,
                             self.line,

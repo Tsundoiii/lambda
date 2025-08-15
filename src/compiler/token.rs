@@ -1,4 +1,4 @@
-#[derive(Copy, Clone, Debug)]
+#[derive(Clone, Debug)]
 pub struct Token {
     pub token_type: TokenType,
     pub start: usize,
@@ -29,14 +29,15 @@ impl Token {
     }
 }
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum TokenType {
     String,
     Integer(i32),
     Float(f32),
-    Identifier,
+    Identifier(String),
 
     Dot,
+    Semicolon,
 
     Plus,
     Minus,
@@ -59,6 +60,7 @@ impl TokenType {
     pub fn from(lexeme: &str) -> Option<Self> {
         match lexeme {
             "." => Some(Self::Dot),
+            ";" => Some(Self::Semicolon),
             "+" => Some(Self::Plus),
             "-" => Some(Self::Minus),
             "*" => Some(Self::Multiply),

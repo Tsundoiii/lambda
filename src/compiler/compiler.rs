@@ -61,6 +61,20 @@ pub fn compile(input: String) -> Option<Program> {
                 program.add_instruction(Instruction::Comparison(Comparison::LessThanEqual));
             }
 
+            TokenType::Semicolon => {
+                program.add_instruction(Instruction::Clear);
+            }
+
+            TokenType::Identifier(identifier) => match identifier.as_str() {
+                "bind" => {
+                    program.add_variable();
+                }
+
+                _ => {
+                    let i = program.add_constant(Constant::Variable(identifier));
+                    program.add_instruction(Instruction::Load(i));
+                }
+            },
             _ => todo!(),
         }
     }

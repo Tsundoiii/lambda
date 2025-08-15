@@ -2,6 +2,7 @@ use std::fmt::Display;
 
 #[derive(Copy, Clone, Debug)]
 pub enum Instruction {
+    Clear,
     Load(usize),
     Return,
     Not,
