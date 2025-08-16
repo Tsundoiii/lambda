@@ -20,7 +20,6 @@ impl VirtualMachine {
     }
 
     pub fn execute(&mut self) {
-        self.program.add_instruction(Instruction::Return);
         while let Ok(()) = self.execute_instruction() {
             self.pointer += 1;
         }
@@ -29,8 +28,8 @@ impl VirtualMachine {
     fn pop_value(&mut self) -> Option<Constant> {
         let top = self.stack.pop();
 
-        if let Some(Constant::Variable(identifer)) = top {
-            self.program.get_variable(identifer)
+        if let Some(Constant::Variable(identifier)) = top {
+            self.program.get_variable(identifier)
         } else {
             top
         }

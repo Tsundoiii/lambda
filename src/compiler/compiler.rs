@@ -70,6 +70,10 @@ pub fn compile(input: String) -> Option<Program> {
                     program.add_variable();
                 }
 
+                "print" => {
+                    program.add_instruction(Instruction::Return);
+                }
+
                 _ => {
                     let i = program.add_constant(Constant::Variable(identifier));
                     program.add_instruction(Instruction::Load(i));

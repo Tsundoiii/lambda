@@ -24,6 +24,8 @@ fn repl() {
         let mut input: String = String::new();
         let _ = io::stdout().flush();
         let _ = io::stdin().read_line(&mut input);
+        input = input.trim().to_string();
+        input.push_str(" print\n");
         execute(input);
     }
 }
