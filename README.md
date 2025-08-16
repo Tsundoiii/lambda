@@ -1,6 +1,6 @@
 # Psil
 
-A stack-based programming language, like LISP but reversed. Heavy inspiration for interpreter design comes from [Crafting Intepreters](https://craftinginterpreters.com), although the language design itself is very different.
+A stack-based virtual machine-based programming language, like LISP but reversed. Heavy inspiration for interpreter design comes from [Crafting Intepreters](https://craftinginterpreters.com), although the language design itself is very different.
 
 ## Usage
 The `psil` command-line tool can be invoked with no argument to enter REPL mode, or with one argument to run a file.
